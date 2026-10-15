@@ -45,24 +45,25 @@ End-to-end, zero-downtime upgrade of a production Kubernetes cluster using `kube
 ```bash
 k get nodes
 ```
-
 Two nodes, both at `v1.34.0`. Note that the `VERSION` column shows the **kubelet** version.
+<img width="1032" height="181" alt="Screenshot 2026-10-14 133732" src="https://github.com/user-attachments/assets/5e83c903-2ef9-4fff-8db6-580a6eff8c98" />
 
 **Which nodes can host workloads?** Check for taints. Pods will need to move between nodes, so this matters.
 
 ```bash
 k describe node | grep -i taints
 ```
-
 Neither node has taints, so **both** can host workloads.
+<img width="972" height="132" alt="Screenshot 2026-10-14 133913" src="https://github.com/user-attachments/assets/5f0604b5-fe4c-45bc-ad1b-b8c760c10a23" />
 
 **How many applications are running?**
 
 ```bash
 k get deploy
 ```
-
 One Deployment.
+<img width="915" height="141" alt="Screenshot 2026-10-14 133818" src="https://github.com/user-attachments/assets/341246eb-dbdb-44ef-a9e1-ca77df957f08" />
+
 
 **Where are the pods running?**
 
@@ -71,13 +72,16 @@ k get pods -o wide
 ```
 
 Pods are spread across both `controlplane` and `node01`.
+<img width="1140" height="203" alt="Screenshot 2026-10-14 134507" src="https://github.com/user-attachments/assets/1b273355-c978-4eb0-a066-1f7459c7a0a9" />
+
 
 **Check the versions available to upgrade to**
 
 ```bash
 kubeadm upgrade plan
 ```
-
+<img width="1187" height="78" alt="Screenshot 2026-10-14 134721" src="https://github.com/user-attachments/assets/a82b7bce-f668-4851-9448-dea4c940944d" />
+<img width="1057" height="140" alt="Screenshot 2026-10-14 134758" src="https://github.com/user-attachments/assets/3d07965c-55f1-4173-a003-c0682fd5bb99" />
 ---
 
 ## Step 2: Upgrade the Control Plane
@@ -87,6 +91,8 @@ kubeadm upgrade plan
 ```bash
 k drain controlplane --ignore-daemonsets
 ```
+<img width="897" height="185" alt="Screenshot 2026-10-14 140100" src="https://github.com/user-attachments/assets/c17e15a9-3eb1-4bcf-8096-b1d23890c91f" />
+
 
 > `--ignore-daemonsets` is required. Without it the drain fails because of DaemonSet-managed pods (see [Troubleshooting](#troubleshooting)).
 
@@ -96,6 +102,8 @@ Verify:
 k get pods -o wide   # all pods are now on node01
 k get nodes          # controlplane shows "Ready,SchedulingDisabled"
 ```
+
+
 
 ### 2.2 Point apt at the v1.35 repository
 
