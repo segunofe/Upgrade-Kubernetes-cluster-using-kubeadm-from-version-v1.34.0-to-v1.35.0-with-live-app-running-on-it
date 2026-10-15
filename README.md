@@ -91,6 +91,10 @@ kubeadm upgrade plan
 ```bash
 k drain controlplane --ignore-daemonsets
 ```
+<img width="1132" height="475" alt="Screenshot 2026-10-14 135535" src="https://github.com/user-attachments/assets/c0f4a813-042e-4c0c-8129-efb9742cf3fb" />
+
+
+
 
 > `--ignore-daemonsets` is required. Without it the drain fails because of DaemonSet-managed pods (see [Troubleshooting](#troubleshooting)).
 
