@@ -91,7 +91,7 @@ kubeadm upgrade plan
 ```bash
 k drain controlplane --ignore-daemonsets
 ```
-<img width="897" height="185" alt="Screenshot 2026-10-14 140100" src="https://github.com/user-attachments/assets/c17e15a9-3eb1-4bcf-8096-b1d23890c91f" />
+
 
 
 > `--ignore-daemonsets` is required. Without it the drain fails because of DaemonSet-managed pods (see [Troubleshooting](#troubleshooting)).
@@ -100,6 +100,8 @@ Verify:
 
 ```bash
 k get pods -o wide   # all pods are now on node01
+<img width="897" height="185" alt="Screenshot 2026-10-14 140100" src="https://github.com/user-attachments/assets/c17e15a9-3eb1-4bcf-8096-b1d23890c91f" />
+
 k get nodes          # controlplane shows "Ready,SchedulingDisabled"
 ```
 
