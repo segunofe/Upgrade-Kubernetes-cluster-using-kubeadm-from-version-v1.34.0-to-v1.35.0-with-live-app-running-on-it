@@ -92,18 +92,18 @@ kubeadm upgrade plan
 k drain controlplane --ignore-daemonsets
 ```
 
-
-
 > `--ignore-daemonsets` is required. Without it the drain fails because of DaemonSet-managed pods (see [Troubleshooting](#troubleshooting)).
 
 Verify:
 
 ```bash
 k get pods -o wide   # all pods are now on node01
-<img width="897" height="185" alt="Screenshot 2026-10-14 140100" src="https://github.com/user-attachments/assets/c17e15a9-3eb1-4bcf-8096-b1d23890c91f" />
-
 k get nodes          # controlplane shows "Ready,SchedulingDisabled"
 ```
+<img width="897" height="185" alt="Screenshot 2026-10-14 140100" src="https://github.com/user-attachments/assets/c17e15a9-3eb1-4bcf-8096-b1d23890c91f" />
+<img width="818" height="117" alt="Screenshot 2026-10-14 140148" src="https://github.com/user-attachments/assets/27644002-ddc3-4d6b-b1d5-ebe28c78cb18" />
+
+
 
 
 
@@ -115,6 +115,9 @@ Confirm the OS (look for `DISTRIB_ID=Ubuntu`):
 cat /etc/*release*
 ```
 
+![Uploading Screenshot 2026-10-14 141407.png…]()
+
+
 Reference: [Upgrading kubeadm clusters](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/) (see *Determine which version to upgrade to*).
 
 Following the docs alone was not enough, because the package repository is pinned to a minor version. Edit the repo file and change the minor version to `v1.35`:
@@ -123,9 +126,15 @@ Following the docs alone was not enough, because the package repository is pinne
 vim /etc/apt/sources.list.d/kubernetes.list
 ```
 
+<img width="933" height="107" alt="Screenshot 2026-10-14 142354" src="https://github.com/user-attachments/assets/da4344c9-2a32-4bdf-9830-094f618808d4" />
+
+
 ```
 deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /
 ```
+<img width="932" height="185" alt="Screenshot 2026-10-14 142253" src="https://github.com/user-attachments/assets/74e6704d-607e-474b-a5c8-cd86c69a2a6f" />
+
+
 
 Then list the available versions:
 
@@ -134,11 +143,16 @@ apt update
 apt-cache madison kubeadm
 ```
 
+<img width="1107" height="656" alt="Screenshot 2026-10-14 142442" src="https://github.com/user-attachments/assets/cd29aa95-ff76-4770-8fe6-f205b0f523f9" />
+
+
+
 ### 2.3 Upgrade kubeadm
 
 ```bash
 apt-get install kubeadm=1.35.0-1.1
 ```
+<img width="1106" height="410" alt="Screenshot 2026-10-14 142541" src="https://github.com/user-attachments/assets/7f3294a7-b1ce-4379-b8f2-a9d46bfb1b93" />
 
 ### 2.4 Plan and apply the upgrade
 
@@ -146,6 +160,11 @@ apt-get install kubeadm=1.35.0-1.1
 kubeadm upgrade plan v1.35.0
 kubeadm upgrade apply v1.35.0
 ```
+<img width="1105" height="510" alt="Screenshot 2026-10-14 142721" src="https://github.com/user-attachments/assets/d6385011-7e90-4a44-bc28-af399bd5fbcd" />
+<img width="1103" height="225" alt="Screenshot 2026-10-14 142920" src="https://github.com/user-attachments/assets/2c572767-bdef-4add-9514-178916d05cb5" />
+
+
+
 
 Enter `y` when prompted to confirm. This can take up to ~5 minutes.
 
@@ -156,12 +175,22 @@ apt-get install kubelet=1.35.0-1.1
 systemctl daemon-reload
 systemctl restart kubelet
 ```
+<img width="1106" height="485" alt="Screenshot 2026-10-14 143002" src="https://github.com/user-attachments/assets/0ef69d14-e261-4e44-a352-63ad83504d0c" />
+
+<img width="661" height="185" alt="Screenshot 2026-10-14 143037" src="https://github.com/user-attachments/assets/959124f8-47a4-4b40-b4c3-3ed1dcc3fef4" />
+
+
+
 
 Verify:
 
 ```bash
 k get nodes
 ```
+
+
+<img width="1318" height="192" alt="Screenshot 2026-10-14 143158" src="https://github.com/user-attachments/assets/fc823174-a415-4eac-8a8b-a675401349a2" />
+
 
 ### 2.6 Uncordon the control plane
 
@@ -170,7 +199,13 @@ k uncordon controlplane
 k get nodes   # controlplane should be "Ready" at v1.35.0
 ```
 
+
+<img width="595" height="68" alt="Screenshot 2026-10-14 143234" src="https://github.com/user-attachments/assets/1080a37a-609a-4258-ad6c-69c339f5cdd4" />
+
+
 **Status so far:** `controlplane` is on `v1.35.0`; `node01` is still on `v1.34.0`.
+<img width="647" height="138" alt="Screenshot 2026-10-14 143249" src="https://github.com/user-attachments/assets/2ea6a50d-f609-41fa-9cb4-7d0d91c21cba" />
+
 
 ---
 
@@ -183,6 +218,7 @@ The worker should be one minor version behind the control plane.
 ```bash
 k get nodes
 ```
+<img width="647" height="138" alt="Screenshot 2026-10-14 143249" src="https://github.com/user-attachments/assets/2ea6a50d-f609-41fa-9cb4-7d0d91c21cba" />
 
 ### 3.2 Drain the worker
 
@@ -190,12 +226,18 @@ k get nodes
 k drain node01 --ignore-daemonsets
 ```
 
+
+
 Verify:
 
 ```bash
 k get nodes   # node01 is cordoned (SchedulingDisabled)
-k get pods    # all pods have moved to controlplane
+k get pods -o wide    # all pods have moved to controlplane
 ```
+
+<img width="1342" height="101" alt="Screenshot 2026-10-14 151121" src="https://github.com/user-attachments/assets/7efb8a6b-a29a-4cbc-9ac8-4039c968169b" />
+<img width="1350" height="182" alt="Screenshot 2026-10-14 150627" src="https://github.com/user-attachments/assets/8cb1efe9-1643-4fc9-bdbb-dac021b7db30" />
+
 
 ### 3.3 SSH into the worker
 
@@ -205,16 +247,25 @@ Get the worker's internal IP, then connect:
 k get nodes -o wide
 ssh <INTERNAL-IP-OF-node01>
 ```
+<img width="1372" height="208" alt="Screenshot 2026-10-14 151157" src="https://github.com/user-attachments/assets/834f6167-727a-465c-a3aa-0005078c21ad" />
+<img width="1093" height="588" alt="Screenshot 2026-10-14 151231" src="https://github.com/user-attachments/assets/7f65be01-372a-49ea-a873-24360a7ffcf4" />
 
 ### 3.4 Point apt at the v1.35 repository (on node01)
 
 The repo file on `node01` must also be edited. Change the minor version in the URL to `v1.35`:
+
+<img width="1086" height="115" alt="Screenshot 2026-10-14 151419" src="https://github.com/user-attachments/assets/781e9609-704b-4ffa-831c-9bcf168de559" />
+
 
 ```bash
 vim /etc/apt/sources.list.d/kubernetes.list
 apt update
 apt-cache madison kubeadm
 ```
+<img width="1127" height="367" alt="Screenshot 2026-10-14 151527" src="https://github.com/user-attachments/assets/79bbda97-80cf-4a92-ae7e-8d774d5a67d0" />
+
+
+
 
 ### 3.5 Upgrade kubeadm, the node config, and the kubelet (on node01)
 
@@ -229,9 +280,14 @@ systemctl daemon-reload
 systemctl restart kubelet
 ```
 
+<img width="952" height="367" alt="Screenshot 2026-10-14 151632" src="https://github.com/user-attachments/assets/6da2a984-6e07-45bb-a285-e59b98a9ef9c" />
+
+
 ### 3.6 Return to the control plane and uncordon the worker
 
 Exit the SSH session, then:
+<img width="610" height="117" alt="Screenshot 2026-10-14 152101" src="https://github.com/user-attachments/assets/cb2bf41d-fa9a-406b-b8cd-63be518dc1ff" />
+
 
 ```bash
 k get nodes          # node01 should now show v1.35.0
@@ -239,6 +295,9 @@ k uncordon node01
 k get nodes          # both nodes "Ready"
 ```
 
+<img width="1066" height="142" alt="Screenshot 2026-10-14 152124" src="https://github.com/user-attachments/assets/72512095-f6a1-4d3c-8dfa-5fdc0971a5e8" />
+
+<img width="970" height="295" alt="Screenshot 2026-10-14 152447" src="https://github.com/user-attachments/assets/19fbc79d-29d7-4ba9-b102-e0453d981453" />
 **Done.** Both nodes are on `v1.35.0` and the application stayed available throughout.
 
 ---
