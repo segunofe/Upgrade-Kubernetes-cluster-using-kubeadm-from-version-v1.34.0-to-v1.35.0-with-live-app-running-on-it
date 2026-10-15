@@ -1,5 +1,5 @@
 # Upgrading a Kubernetes Cluster with kubeadm (v1.34.0 → v1.35.0)
-
+<img width="2080" height="1000" alt="upgrade-flow" src="https://github.com/user-attachments/assets/a6af7313-3d42-4ccb-9a34-405c6db1739d" />
 End-to-end, zero-downtime upgrade of a production Kubernetes cluster using `kubeadm`, with a live application running on it.
 
 ## Overview
